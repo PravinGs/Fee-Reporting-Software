@@ -1,26 +1,32 @@
 package dao;
 
-import model.Accountant;
-import model.Admin;
+import model.Auth;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminDAOImpl implements AdminDAO{
-    AccountantDAOImpl accountantDAO = new AccountantDAOImpl();
+    private static AccountantDAOImpl accountantDAO = new AccountantDAOImpl();
 
     @Override
-    public int saveAdmin(Admin admin) throws Exception {
+    public int addAuthenticators(Auth auth) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
         int success = 0;
         try {
             connection = DAOUtilities.getConnection();
-            String sql = "INSERT INTO admin VALUES (?,?,?);";
+            String sql = "INSERT INTO auth VALUES (?,?,?,?,?);";
             statement = connection.prepareStatement(sql);
-            statement.setString(1, admin.getName());
-            statement.setString(2, admin.getEmail());
-            statement.setString(3, admin.getMobile());
+            statement.setString(1, auth.getId());
+            statement.setString(2, auth.getName());
+            statement.setString(3, auth.getPassword());
+            statement.setString(4, auth.getEmail());
+            if (auth.getId().startsWith("admin")) {
+                statement.setBoolean(5,true);
+            } else {
+                statement.setBoolean(5,false);
+            }
             success = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,22 +40,47 @@ public class AdminDAOImpl implements AdminDAO{
         }
         return success;
     }
-
-    @Override
-    public int addAccountant(Accountant accountant) throws Exception {
-        return accountantDAO.saveAccountant(accountant);
+    public Auth getAuthenticator(String authID) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        Auth auth = null;
+        try {
+            connection = DAOUtilities.getConnection();
+            String sql = "SELECT * FROM auth WHERE id = ?;";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, authID);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                auth = new Auth();
+                auth.setId(authID);
+                auth.setName(rs.getString("name"));
+                auth.setPassword(rs.getString("password"));
+                auth.setEmail(rs.getString("email"));
+                auth.setAdmin(rs.getBoolean("is_admin"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement!= null) statement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return auth;
     }
 
     @Override
-    public int deleteAccountant(String  id) throws Exception {
+    public int deleteAccountant(String accountantID) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
         int success = 0;
         try {
             connection = DAOUtilities.getConnection();
-            String sql = "DELETE FROM accountant WHERE id = ? ;";
+            String sql = "DELETE FROM auth WHERE id = ? ;";
             statement = connection.prepareStatement(sql);
-            statement.setString(1,id);
+            statement.setString(1,accountantID);
             success = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,17 +96,17 @@ public class AdminDAOImpl implements AdminDAO{
     }
 
     @Override
-    public int updateAccountant(Accountant accountant) throws Exception {
+    public int updateAccountant(Auth accountant) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;
         int success = 0;
         try{
             connection = DAOUtilities.getConnection();
-            String sql = "UPDATE accountant SET name = ?, email = ?, represent = ? WHERE id = ?);";
+            String sql = "UPDATE auth SET name = ?, password = ?, email = ? WHERE id = ?);";
             statement = connection.prepareStatement(sql);
             statement.setString(1,accountant.getName());
-            statement.setString(2,accountant.getEmail());
-            statement.setString(3,accountant.getRepresent());
+            statement.setString(2,accountant.getPassword());
+            statement.setString(3,accountant.getEmail());
             statement.setString(4,accountant.getId());
             success = statement.executeUpdate();
         } catch (SQLException e) {
@@ -90,38 +121,52 @@ public class AdminDAOImpl implements AdminDAO{
         }
         return success;
     }
-
     @Override
-    public Accountant getAccountant(String id) throws Exception {
-        return accountantDAO.getAccountant(id);
-    }
-
-    @Override
-    public List<Accountant> getAllAccountants() throws Exception {
-        List<Accountant> list = accountantDAO.getAllAccountants();
-        return list;
-    }
-
-    @Override
-    public List<Accountant> getAccountantsByDepartment(String dept) throws Exception {
-        List<Accountant> list = accountantDAO.getAccountantByDepartment(dept);
-        return list;
-    }
-
-    @Override
-    public Boolean login(String name, String password) {
+    public List<Auth> getAllAccountants() throws Exception {
         Connection connection = null;
-        PreparedStatement statement = null;
-        String success = "";
+        List<Auth> list = new ArrayList<>();
+        Statement statement = null;
         try {
             connection = DAOUtilities.getConnection();
-            String sql = "select id from auth where name = ? AND password = ?;";
+            String sql = "SELECT * FROM auth WHERE is_admin = 0";
+            statement = connection.createStatement();
+            ResultSet res = statement.executeQuery(sql);
+            while (res.next()) {
+                Auth auth = new Auth();
+                auth.setId(res.getString("id"));
+                auth.setName(res.getString("name"));
+                auth.setPassword(res.getString("password"));
+                auth.setEmail(res.getString("email"));
+                auth.setAdmin(res.getBoolean("is_admin"));
+                list.add(auth);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) connection.close();
+                if (statement != null) statement.close();
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public Boolean login(String id, String password) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        String name = "";
+        try {
+            connection = DAOUtilities.getConnection();
+            String sql = "select name from auth where id = ? AND password = ?;";
             statement = connection.prepareStatement(sql);
-            statement.setString(1, name);
+            statement.setString(1, id);
             statement.setString(2, password);
             ResultSet res = statement.executeQuery();
             while (res.next())
-                success = res.getString("id");
+                name = res.getString("name");
         } catch (SQLException e) {
             e.getMessage();
         } finally {
@@ -131,12 +176,12 @@ public class AdminDAOImpl implements AdminDAO{
             } catch (SQLException e) {
             }
         }
-        return (success.length() == 0) ? false:true;
+        return (name.length() == 0) ? false:true;
     }
 
     @Override
-    public Boolean logout(String name, String password) {
-        if (login(name,password))
+    public Boolean logout(String id, String password) {
+        if (login(id,password))
             return true;
         return false;
     }

@@ -1,21 +1,16 @@
 package dao;
 
-import model.Accountant;
-import model.Admin;
+import model.Auth;
 
 import java.util.List;
 
 public interface AdminDAO {
-    int saveAdmin(Admin admin) throws Exception;
-    int addAccountant(Accountant accountant) throws Exception;
-    int deleteAccountant(String id) throws Exception;
-    int updateAccountant(Accountant accountant) throws Exception;
-    Accountant getAccountant(String id) throws Exception;
-    List<Accountant> getAllAccountants() throws Exception;
-
-    List<Accountant> getAccountantsByDepartment(String dept) throws Exception;
-
-    Boolean login(String name, String password);
-    Boolean logout(String name, String password);
+    int addAuthenticators(Auth auth) throws Exception;
+    int deleteAccountant(String authID) throws Exception;
+    int updateAccountant(Auth auth) throws Exception;
+    Auth getAuthenticator(String authID) throws Exception;
+    List<Auth> getAllAccountants() throws Exception;
+    Boolean login(String id, String password);
+    Boolean logout(String id, String password);
 
 }

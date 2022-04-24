@@ -83,40 +83,43 @@ public class Stimulation {
         Student student = new Student(id, name, department,year,email);
         return student;
     }
-    static Accountant addAccountant() throws Exception {
+    static Auth addAuthenticator() throws Exception {
         Scanner in = new Scanner(System.in);
         System.out.println("Accountant creation..");
-        System.out.print("Enter id (acc-department-number):\t");
+        System.out.print("Enter id ():\t");
         String id = in.nextLine();
         System.out.println();
         System.out.print("Enter name:\t");
         String name = in.nextLine();
         System.out.println();
+        System.out.print("Enter password:\t");
+        String password = in.nextLine();
+        System.out.println();
         System.out.print("Enter email:\t");
         String email = in.nextLine();
         System.out.println();
-        System.out.print("Enter department:\t");
-        String represent = in.nextLine();
-        System.out.println();
-        Accountant accountant = new Accountant(id, name, email,represent);
-        return accountant;
+        Auth auth = new Auth(id, name, password,email);
+        return auth;
     }
     static void addAdmin() throws Exception {
-        Admin admin = null;
+        Auth auth = null;
         Scanner in = new Scanner(System.in);
         int i = 1;
         while (i == 1) {
+            System.out.print("Enter your id:\t");
+            String id = in.nextLine();
+            System.out.println();
             System.out.print("Enter your name:\t");
             String name = in.nextLine();
+            System.out.println();
+            System.out.print("Enter your password:\t");
+            String password = in.nextLine();
             System.out.println();
             System.out.print("Enter your email:\t");
             String email = in.nextLine();
             System.out.println();
-            System.out.print("Enter your mobile number:\t");
-            String mobile = in.nextLine();
-            System.out.println();
-            admin = new Admin(name, email, mobile);
-            int success = adminDAO.saveAdmin(admin);
+            auth = new Auth(id, name, password,email);
+            int success = adminDAO.addAuthenticators(auth);
             if (success > 0) {
                 System.out.println("Admin created successfully");
             }
@@ -126,34 +129,42 @@ public class Stimulation {
     }
     static void adminActions() throws Exception {
         Scanner in = new Scanner(System.in);
-        System.out.println("This is Admin panel let's do some activities ");
+
+        System.out.println("\nPlease Enter Admin login credentials ");
+        System.out.print("please Enter your ID:\t");
+        String adminID = in.nextLine();
+        System.out.print("Please Enter your password:\t");
+        String password = in.nextLine();
+        boolean choice  = adminDAO.login(adminID, password);
+        System.out.println();
+
+
+        System.out.println("Welcome to this is Admin panel ");
         System.out.println("Please keep this list in your mind for any operation" +
                 "\nclick 1 for view any accountant" +
                 "\nclick 2 for view all the Accountants" +
                 "\nclick 3 for remove any Accountant from the DB" +
                 "\nclick 4 add new Accountant" +
-                "\nclick 5 to see all the Students who all paid their fees" +
-                "\nclick 6 to see all the Students who all not paid their fees" +
-                "\nclick 7 to see the accountants departmentWise" +
-                "\nclick 8 to see log book of the college" +
-                "\nclick 9 to see all fees schedule "+
-                "\nenter 10 to terminate this panel"
+                "\nclick 5 to see log book of the college" +
+                "\nclick 6 to see all fees schedule "+
+                "\nclick 7 to logout from this panel"
         );
-        boolean choice  = true;
         while (choice) {
             int i = in.nextInt();
             switch (i) {
                 case 1:
-                    System.out.print("Please enter the id of the accountant:\t");
                     in.nextLine();
+                    System.out.print("Please enter the id of the accountant:\t");
                     String id = in.nextLine();
-                    System.out.println(adminDAO.getAccountant(id).toString());
+                    System.out.println((adminDAO.getAuthenticator(id) != null) ? adminDAO.getAuthenticator(id).toString(): "check your Id's");
                     break;
                 case 2:
                     System.out.println("Here are the list of accountants we have");
-                    List<Accountant> list = adminDAO.getAllAccountants();
-                    for (Accountant accountant:list)
-                        System.out.println(accountant.toString());
+                    List<Auth> list = adminDAO.getAllAccountants();
+                    if (list != null) {
+                        for (Auth accountant : list)
+                            System.out.println(accountant.toString());
+                    }
                     break;
                 case 3:
                     System.out.print("Please enter the id of the accountant:\t");
@@ -162,39 +173,14 @@ public class Stimulation {
                     System.out.println(adminDAO.deleteAccountant(accountantId));
                     break;
                 case 4:
-                    System.out.println(adminDAO.addAccountant(addAccountant()));
+                    System.out.println(adminDAO.addAuthenticators(addAuthenticator()));
                     break;
+
                 case 5:
-                    System.out.println("Fully paid students  list");
-                    List<Long> student_id = accountantDAO.getAllFullyPaidStudents();
-                    for (Long ids: student_id) {
-                        Student s = studentDAO.getStudent(ids);
-                        System.out.println(s.toString());
-                    }
-                    break;
-                case 6:
-                    System.out.println("Partially paid students  list");
-                    List<Long> studentsList = accountantDAO.getAllPartiallyPaidStudent();
-                    for (Long studentID: studentsList) {
-                        Student student = studentDAO.getStudent(studentID);
-                        System.out.println(student.toString());
-                    }
-                    break;
-                case 7:
-                    System.out.print("Please enter the department:\t");
-                    in.nextLine();
-                    String dept = in.nextLine().toUpperCase(Locale.ROOT);
-                    List<Accountant> accountants = adminDAO.getAccountantsByDepartment(dept);
-                    System.out.println("\nThe Accountants from " + dept);
-                    for (Accountant accountant: accountants) {
-                        System.out.println(accountant.toString());
-                    }
-                    break;
-                case 8:
                     System.out.println("The Transaction details ");
                     System.out.println(logDAO.getAllLogs());
                     break;
-                case 9:
+                case 6:
                     System.out.println("Fees structure database");
                     List<FeeStructure > list1 = accountantDAO.getAllFeesStructures();
                     if (list1.size() > 0){
@@ -205,11 +191,10 @@ public class Stimulation {
                         System.out.println("No fees structures...");
                     }
                     break;
-                case 10:
+                case 7:
                     System.out.println("Thanks..");
                     choice = false;
                     break;
-
             }
         }
 
@@ -217,19 +202,31 @@ public class Stimulation {
 
     static void accountantActions() throws Exception {
         Scanner in = new Scanner(System.in);
-        System.out.println("This is Accountant panel let's do some activities ");
+
+
+        System.out.println("\nPlease Enter Accountant login credentials ");
+        System.out.print("please Enter your ID:\t");
+        String adminID = in.nextLine();
+        System.out.print("Please Enter your password:\t");
+        String password = in.nextLine();
+        boolean choice  = adminDAO.login(adminID, password);
+        System.out.println();
+
+        System.out.println("Welcome to is Accountant panel ");
         System.out.println("Please keep this list in your mind for any operation" +
                 "\nclick 1 to view any student" +
                 "\nclick 2 to view all the students" +
                 "\nclick 3 to remove a student from the DB" +
                 "\nclick 4 to add new Student" +
                 "\nclick 5 to update student" +
-                "\nclick 6 to create feesSchedule" +
+                "\nclick 6 to create feesStructure" +
                 "\nclick 7 to check student Due amount" +
                 "\nclick 8 to see log details of the student" +
-                "\nclick 9 to terminate this process"
+                "\nclick 9 to see fully paid student's list" +
+                "\nenter 10 to see partially paid student's list" +
+                "\nenter 11 to logout from the account panel"
+
         );
-        boolean choice = true;
         while (choice) {
             int i = in.nextInt();
             switch (i) {
@@ -243,7 +240,7 @@ public class Stimulation {
                     accountantDAO.getAllStudents();
                     break;
                 case 3:
-                    System.out.print("Please enter the id of the student:\t");
+                    System.out.print("\nPlease enter the id of the student:\t");
                     Long studentID = in.nextLong();
                     int result = accountantDAO.deleteStudent(studentID);
                     if (result == 0)
@@ -282,6 +279,22 @@ public class Stimulation {
                     }
                     break;
                 case 9:
+                    System.out.println("Fully paid students  list");
+                    List<Long> student_id = accountantDAO.getAllFullyPaidStudents();
+                    for (Long ids: student_id) {
+                        Student s = studentDAO.getStudent(ids);
+                        System.out.println(s.toString());
+                    }
+                    break;
+                case 10:
+                    System.out.println("Partially paid students  list");
+                    List<Long> studentsList = accountantDAO.getAllPartiallyPaidStudent();
+                    for (Long studID: studentsList) {
+                        Student new_student = studentDAO.getStudent(studID);
+                        System.out.println(new_student.toString());
+                    }
+                    break;
+                case 11:
                     System.out.println("Thank you....");
                     choice = false;
                     break;
@@ -344,7 +357,7 @@ public class Stimulation {
         Scanner in = new Scanner(System.in);
         boolean choice = true;
         while (choice) {
-            System.out.print("Please Enter 1 you are student?\nEnter 2 you are Accountant?\nEnter 3 you are an Admin");
+            System.out.print("Please Enter 1 you are student?\nEnter 2 you are Accountant?\nEnter 3 you are an Admin \noption:\t");
             int i = in.nextInt();
             if (i == 1)
                 studentActions();

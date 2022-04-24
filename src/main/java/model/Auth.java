@@ -5,12 +5,25 @@ public class Auth {
     private String name;
     private String password;
     private String email;
+    private Boolean isAdmin;
+
+    public Auth(String id, String name, String password, String email, boolean isAdmin) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.isAdmin = isAdmin;
+    }
 
     public Auth(String id, String name, String password, String email) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.email = email;
+    }
+
+    public Auth() {
+
     }
 
     public String getId() {
@@ -43,6 +56,14 @@ public class Auth {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
     }
 
     @Override

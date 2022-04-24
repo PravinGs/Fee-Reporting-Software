@@ -1,10 +1,8 @@
 package dao;
 
-import model.Accountant;
 import model.FeeStructure;
 import model.Student;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,62 +10,7 @@ import java.util.List;
 public class AccountantDAOImpl implements AccountantDAO{
     private StudentDAOImpl studentService = new StudentDAOImpl();
     private FeesStructureDAOImpl fsService = new FeesStructureDAOImpl();
-
-    @Override
-    public int saveAccountant(Accountant accountant) throws Exception {
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        int success = 0;
-        try {
-            connection = DAOUtilities.getConnection();
-            String query = "INSERT INTO accountant values (?,?,?,?);";
-            stmt = connection.prepareStatement(query);
-            stmt.setString(1,accountant.getId());
-            stmt.setString(2,accountant.getName());
-            stmt.setString(3,accountant.getEmail());
-            stmt.setString(4,accountant.getRepresent());
-            success = stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) stmt.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return success;
-    }
-    @Override
-    public Accountant getAccountant(String id) throws Exception {
-        Connection connection = null;
-        Accountant accountant = null;
-        PreparedStatement stmt = null;
-        try {
-            connection = DAOUtilities.getConnection();
-            String query = "SELECT * FROM accountant WHERE id = ?;";
-            stmt = connection.prepareStatement(query);
-            stmt.setString(1,id);
-            ResultSet res = stmt.executeQuery();
-            while (res.next()) {
-                String name = res.getString("name");
-                String email = res.getString("email");
-                String represent = res.getString("represent");
-                accountant = new Accountant(id,name,email,represent);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) stmt.close();;
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return accountant;
-    }
+    private static AdminDAOImpl adminService = new AdminDAOImpl();
     @Override
     public int addStudent(Student student) throws Exception {
         return studentService.saveStudent(student);
@@ -94,6 +37,7 @@ public class AccountantDAOImpl implements AccountantDAO{
     public int updateStudent(Student student) throws Exception {
         return studentService.updateStudent(student);
     }
+
     @Override
     public void addFeesStructure(FeeStructure feeStructure) throws Exception {
         Student student = studentService.getStudent(feeStructure.getStudentId());
@@ -116,36 +60,6 @@ public class AccountantDAOImpl implements AccountantDAO{
             System.out.println(student.toString());
         }
 
-    }
-    @Override
-    public List<Accountant> getAllAccountants() throws Exception {
-        Connection connection = null;
-        List<Accountant> list = new ArrayList<>();
-        PreparedStatement statement = null;
-        try {
-            connection = DAOUtilities.getConnection();
-            String sql = "SELECT * FROM accountant;";
-            statement = connection.prepareStatement(sql);
-            ResultSet res = statement.executeQuery();
-            while (res.next()) {
-                Accountant accountant = new Accountant();
-                accountant.setId(res.getString("id"));
-                accountant.setName(res.getString("name"));
-                accountant.setEmail(res.getString("email"));
-                accountant.setRepresent(res.getString("represent"));
-                list.add(accountant);
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return list;
     }
     @Override
     public List<Long> getAllFullyPaidStudents() throws Exception {
@@ -195,34 +109,7 @@ public class AccountantDAOImpl implements AccountantDAO{
         }
         return list;
     }
-    @Override
-    public List<Accountant> getAccountantByDepartment(String dept) throws Exception {
-        Connection connection = null;
-        List<Accountant> list = new ArrayList<>();
-        PreparedStatement statement = null;
-        try {
-            connection = DAOUtilities.getConnection();
-            String sql = "SELECT * FROM accountant WHERE represent = ?;";
-            statement = connection.prepareStatement(sql);
-            statement.setString(1,dept);
-            ResultSet res = statement.executeQuery();
-            while (res.next()) {
-                String id = res.getString("id");
-                String name = res.getString("name");
-                String email = res.getString("email");
-                Accountant accountant = new Accountant(id,name,email,dept);
-                list.add(accountant);
-            }
-        } catch (SQLException e) {
-        } finally {
-            try {
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-            }
-        }
-        return list;
-    }
+
     @Override
     public int checkDue(Long studentID) throws Exception {
         int amount = -1;
