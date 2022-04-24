@@ -1,52 +1,57 @@
-FEE REPORTING SYSTEM
+# **FEE REPORTING SYSTEM**
 
-Project Description
+## **Project Description**
 
 This project helps  college/school to manage their fee payment methods. The accountant module handle the student payment details and add it to the log 
 where the details of the payment stored with student id and respective date and time. The admin can change the accountant according to his needs.
 
-Technologies Used
+## **Technologies Used**
 
--> Maven - version 4.0.0
+* ### Maven - version 4.0.0
+* ### Java  - version 17
+* ### MySQL - version 8.1.2
 
--> Java  - version 17
+## **Features**
 
--> MySQL - version 8.1.2
+* Created three major modules Admin, Accountant, Student
 
-Features
+* Managed for Admin to check the accountant's activities
 
--> Created three major modules Admin, Accountant, Student
+* Managed Student payments and handled by an Accountant
 
--> Managed for Admin to check the accountant's activities
+* Managed to handle student record creation and updating
 
--> Managed Student payments and handled by an Accountant
+* Used to manage the student's fee payments
 
--> Managed to handle student record creation and updating
+## **To-do list:**
 
--> Used to manage the student's fee payments
+* Admin can add/view/delete accountant
 
-List of features ready and TODOs for future development
+* Accountant can add/view/delete student
 
-Admin can add/view/delete accountant 
-Accountant can add/view/delete student
-Student can view/update his detail
-To-do list:
+* Student can view/update his detail
 
-Wow improvement to be done 1
-Wow improvement to be done 2
-Getting Started
-(include git clone command) (include all environment setup steps)
+* Authenticated Admin and Accountant can only do any modification on the database
+ 
+## **Getting Started**
 
-Be sure to include BOTH Windows and Unix command
-Be sure to mention if the commands only work on a specific platform (eg. AWS, GCP)
+* Download the project. It will be in zip format, so unzip and open with your favourite IDE.
+* Check the given version of the jar files are installed your computer or not.
+* If you have intelliJ Idea then that will automatically compile things for us.
+* Go to the simulation class and run the main function.
 
-All the code required to get started
-Images of what it should look like
-Usage
-Here, you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action.
+## **Usage**
 
-Contributors
-Here list the people who have contributed to this project. (ignore this section, if its a solo project)
+First Enter into any of the panel where both admin and accountant required login credentials, and you have 
+given instruction there itself, so those instructions let you understand this project well. Before login to the panel
+should create user record.
 
-License
-This project uses the following license: <license_name>.
+
+## **Contributors**
+
+This is project is started and completed by myself.
+
+[//]: # (## **License**)
+
+[//]: # ()
+[//]: # (This project uses the following license: <license_name>.)
