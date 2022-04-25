@@ -1,14 +1,12 @@
 package dao;
 
 import model.Auth;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdminDAOImpl implements AdminDAO{
     private static AccountantDAOImpl accountantDAO = new AccountantDAOImpl();
-
     @Override
     public int addAuthenticators(Auth auth) throws Exception {
         Connection connection = null;
@@ -68,7 +66,6 @@ public class AdminDAOImpl implements AdminDAO{
         }
         return auth;
     }
-
     @Override
     public int deleteAccountant(String accountantID) throws Exception {
         Connection connection = null;
@@ -92,7 +89,6 @@ public class AdminDAOImpl implements AdminDAO{
         }
         return success;
     }
-
     @Override
     public int updateAccountant(Auth accountant) throws Exception {
         Connection connection = null;
@@ -150,7 +146,6 @@ public class AdminDAOImpl implements AdminDAO{
         }
         return list;
     }
-
     @Override
     public Boolean login(String id, String password) {
         Connection connection = null;

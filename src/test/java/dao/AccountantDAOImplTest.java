@@ -4,15 +4,10 @@ import model.FeeStructure;
 import model.Student;
 import org.junit.jupiter.api.Test;
 
-import java.util.Scanner;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 
 class AccountantDAOImplTest {
 
     private AccountantDAOImpl accountantDAO = new AccountantDAOImpl();
-
     @Test
     public void addStudent() throws Exception {
         Student student = new Student(210918104036L, "Ram", "CSE", "IV", "ram@yahoo.com");

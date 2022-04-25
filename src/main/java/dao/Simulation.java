@@ -3,10 +3,9 @@ package dao;
 import model.*;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
-public class Stimulation {
+public class Simulation {
     private static StudentDAOImpl studentDAO = new StudentDAOImpl();
     private static AccountantDAOImpl accountantDAO = new AccountantDAOImpl();
     private static AdminDAOImpl adminDAO = new AdminDAOImpl();
@@ -131,7 +130,6 @@ public class Stimulation {
         return auth;
     }
 
-
     static void addAdmin() throws Exception {
         Auth auth = null;
         Scanner in = new Scanner(System.in);
@@ -187,7 +185,7 @@ public class Stimulation {
                 "\nclick 3 for remove any Accountant from the DB" +
                 "\nclick 4 add new Accountant" +
                 "\nclick 5 to see log book of the college" +
-                "\nclick 6 to see all fees schedule "+
+                "\nclick 6 to see all fees structures of the students"+
                 "\nclick 7 to logout from this panel"
         );
         while (choice) {
@@ -214,7 +212,7 @@ public class Stimulation {
                     System.out.println(adminDAO.deleteAccountant(accountantId));
                     break;
                 case 4:
-                    System.out.println(adminDAO.addAuthenticators(addAuthenticator())  >  0 ? adminDAO.addAuthenticators(addAuthenticator())
+                    System.out.println(adminDAO.addAuthenticators(addAuthenticator())  >  0 ? 1
                             : "Change Your Name which is already exists.");
                     break;
 
@@ -248,7 +246,6 @@ public class Stimulation {
 
     static void accountantActions() throws Exception {
         Scanner in = new Scanner(System.in);
-
 
         System.out.println("\nPlease Enter Accountant login credentials ");
         System.out.print("please Enter your ID:\t");
@@ -348,7 +345,7 @@ public class Stimulation {
                     break;
                 case 11:
                     Auth accountant = updateAuth(accountantID);
-                    adminDAO.updateAccountant(accountant);
+                    System.out.println(adminDAO.updateAccountant(accountant));
                     break;
                 case 12:
                     System.out.println("Thank you....");
@@ -362,10 +359,10 @@ public class Stimulation {
         Scanner in = new Scanner(System.in);
         System.out.println("This is Student panel let's do some activities ");
         System.out.println("Please keep this list in your mind for any operation" +
-                "\nclick 1 to add student" +
-                "\nclick 2 to update student" +
-                "\nclick 3 to check student fee_structure" +
-                "\nclick 4 to pay due"
+                "\nclick 1 to update student" +
+                "\nclick 2 to check student fee_structure" +
+                "\nclick 3 to pay due" +
+                "\nclick 4 to out from the panel"
         );
 
         boolean choice = true;
@@ -373,19 +370,15 @@ public class Stimulation {
             int i = in.nextInt();
             switch (i) {
                 case 1:
-                    Student student = addStudent();
-                    System.out.println(studentDAO.saveStudent(student));
-                    break;
-                case 2:
                     Student updatedStudent = updateStudent();
                     System.out.println(studentDAO.updateStudent(updatedStudent));
                     break;
-                case 3:
+                case 2:
                     System.out.print("Enter student id :\t");
                     Long s_id = in.nextLong();
                     studentDAO.showFeesStructure(s_id);
                     break;
-                case 4:
+                case 3:
                     System.out.print("Enter Amount:\t");
                     int amount = in.nextInt();
                     System.out.print("Enter student id:\t");
@@ -395,7 +388,7 @@ public class Stimulation {
                     String desc = in.nextLine();
                     studentDAO.amountPayment(amount,studentID,desc);
                     break;
-                case 5:
+                case 4:
                     System.out.println("Thank you....");
                     choice = false;
                     break;
@@ -406,9 +399,6 @@ public class Stimulation {
 
     }
 
-    static void adminAuth() {
-
-    }
     public static void main(String[] args) throws Exception {
         Scanner in = new Scanner(System.in);
         boolean choice = true;
