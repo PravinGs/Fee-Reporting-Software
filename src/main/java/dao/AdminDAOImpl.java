@@ -29,13 +29,11 @@ public class AdminDAOImpl implements AdminDAO{
             }
             success = statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             try {
                 if (statement != null) statement.close();
                 if (connection != null) connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
             }
         }
         return success;
@@ -102,7 +100,7 @@ public class AdminDAOImpl implements AdminDAO{
         int success = 0;
         try{
             connection = DAOUtilities.getConnection();
-            String sql = "UPDATE auth SET name = ?, password = ?, email = ? WHERE id = ?);";
+            String sql = "UPDATE auth SET name = ?, password = ?, email = ? WHERE id = ?;";
             statement = connection.prepareStatement(sql);
             statement.setString(1,accountant.getName());
             statement.setString(2,accountant.getPassword());

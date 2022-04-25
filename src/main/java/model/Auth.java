@@ -71,7 +71,6 @@ public class Auth {
         return "Auth{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }

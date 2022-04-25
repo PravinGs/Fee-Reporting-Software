@@ -29,6 +29,35 @@ public class Stimulation {
         FeeStructure structure = new FeeStructure(id,tuition,hostel,transport,scholar,amt);
         return structure;
     }
+
+    static Auth updateAuth(String id)throws Exception{
+        Scanner in = new Scanner(System.in);
+        System.out.println("Accountant update...");
+        Auth auth = adminDAO.getAuthenticator(id);
+        if (auth != null) {
+            System.out.println("If you don't want to change the existing one just hit enter ");
+            System.out.print("Your Existing ID " + auth.getId() + " :\t");
+            String accountantId = in.nextLine();
+            accountantId = (accountantId.length() == 0) ? auth.getId() : accountantId;
+            System.out.println();
+            System.out.print("Your Existing Name " + auth.getName() + " :\t");
+            String name = in.nextLine();
+            name = (name.length() == 0) ? auth.getName() : name;
+            System.out.println();
+            System.out.print("Your Existing Password " + auth.getPassword() + " :\t");
+            String password = in.nextLine();
+            password = (password.length() == 0) ? auth.getPassword() : password;
+            System.out.println();
+            System.out.print("Your Existing email " + auth.getEmail() + " :\t");
+            String email = in.nextLine();
+            email = (email.length() == 0) ? auth.getEmail() : email;
+            System.out.println();
+            Auth updatedAuth = new Auth(accountantId, name, password, email);
+            return updatedAuth;
+        } else {
+            return null;
+        }
+    }
     static Student updateStudent() throws Exception {
         Scanner in = new Scanner(System.in);
         System.out.println("Student update...");
@@ -101,6 +130,8 @@ public class Stimulation {
         Auth auth = new Auth(id, name, password,email);
         return auth;
     }
+
+
     static void addAdmin() throws Exception {
         Auth auth = null;
         Scanner in = new Scanner(System.in);
@@ -137,6 +168,16 @@ public class Stimulation {
         String password = in.nextLine();
         boolean choice  = adminDAO.login(adminID, password);
         System.out.println();
+        Auth admin = adminDAO.getAuthenticator(adminID);
+        if (choice == false) {
+            System.out.println("Failed to login please check your Id and Password");
+            return;
+        }
+
+        if (choice == true && !admin.getAdmin()) {
+            System.out.println("you are not authorized to access this page");
+            return;
+        }
 
 
         System.out.println("Welcome to this is Admin panel ");
@@ -156,7 +197,7 @@ public class Stimulation {
                     in.nextLine();
                     System.out.print("Please enter the id of the accountant:\t");
                     String id = in.nextLine();
-                    System.out.println((adminDAO.getAuthenticator(id) != null) ? adminDAO.getAuthenticator(id).toString(): "check your Id's");
+                    System.out.println((adminDAO.getAuthenticator(id) != null) ? adminDAO.getAuthenticator(id).toString(): "check your Id no accountant with this id");
                     break;
                 case 2:
                     System.out.println("Here are the list of accountants we have");
@@ -173,12 +214,16 @@ public class Stimulation {
                     System.out.println(adminDAO.deleteAccountant(accountantId));
                     break;
                 case 4:
-                    System.out.println(adminDAO.addAuthenticators(addAuthenticator()));
+                    System.out.println(adminDAO.addAuthenticators(addAuthenticator())  >  0 ? adminDAO.addAuthenticators(addAuthenticator())
+                            : "Change Your Name which is already exists.");
                     break;
 
                 case 5:
                     System.out.println("The Transaction details ");
-                    System.out.println(logDAO.getAllLogs());
+                    List<Log> logs = logDAO.getAllLogs();
+                    for (Log log: logs) {
+                        System.out.println(log.toString());
+                    }
                     break;
                 case 6:
                     System.out.println("Fees structure database");
@@ -195,6 +240,7 @@ public class Stimulation {
                     System.out.println("Thanks..");
                     choice = false;
                     break;
+
             }
         }
 
@@ -206,11 +252,16 @@ public class Stimulation {
 
         System.out.println("\nPlease Enter Accountant login credentials ");
         System.out.print("please Enter your ID:\t");
-        String adminID = in.nextLine();
+        String accountantID = in.nextLine();
         System.out.print("Please Enter your password:\t");
         String password = in.nextLine();
-        boolean choice  = adminDAO.login(adminID, password);
+        boolean choice  = adminDAO.login(accountantID, password);
         System.out.println();
+
+        if (choice == false) {
+            System.out.println("Login failed please check your id and password");
+            return;
+        }
 
         System.out.println("Welcome to is Accountant panel ");
         System.out.println("Please keep this list in your mind for any operation" +
@@ -224,7 +275,8 @@ public class Stimulation {
                 "\nclick 8 to see log details of the student" +
                 "\nclick 9 to see fully paid student's list" +
                 "\nenter 10 to see partially paid student's list" +
-                "\nenter 11 to logout from the account panel"
+                "\nenter 11 update your details" +
+                "\nenter 12 to logout from the accountant panel"
 
         );
         while (choice) {
@@ -295,6 +347,10 @@ public class Stimulation {
                     }
                     break;
                 case 11:
+                    Auth accountant = updateAuth(accountantID);
+                    adminDAO.updateAccountant(accountant);
+                    break;
+                case 12:
                     System.out.println("Thank you....");
                     choice = false;
                     break;
