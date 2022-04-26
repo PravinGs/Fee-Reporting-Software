@@ -81,7 +81,7 @@ public class FeesStructureDAOImpl implements FeesStructureDAO{
             ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
                 FeeStructure fs = new FeeStructure();
-                fs.setStudentId((long) studentId);
+                fs.setStudentId(studentId);
                 fs.setHostelFees(rs.getInt("hostel_fees"));
                 fs.setTuitionFees(rs.getInt("tution_fees"));
                 fs.setTransportFees(rs.getInt("transport_fees"));

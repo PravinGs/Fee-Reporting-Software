@@ -22,8 +22,19 @@ public class Auth {
         this.email = email;
     }
 
-    public Auth() {
+    public Auth() {}
 
+//    public Boolean usernameValidation(String name) {
+//        Auth auth =
+//    }
+
+    public Boolean passwordValidation(String password) {
+        if (password.length() < 5) {
+            System.out.println("You password must have at least five characters");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public String getId() {
